@@ -21,6 +21,10 @@ public class LevelGenerator : SerializedMonoBehaviour
     [ShowInInspector]
     Dictionary<string, GameObject> tilePrefabDict;
 
+    [HorizontalGroup("grassProbs")]
+    public float grassToGrass = 3f, grassToWater = 1f;
+    [HorizontalGroup("waterProbs")]
+    public float waterToGrass = 1f, waterToWater = 2f;
     [Space]
     [OdinSerialize]
     [ShowInInspector]
@@ -35,6 +39,8 @@ public class LevelGenerator : SerializedMonoBehaviour
     [ShowIfGroup("isFallInTiles")]
     [BoxGroup("isFallInTiles/FallInTilesProps")]
     [SerializeField] float fallingHeight = 5f, fallingDuration = 1f;
+
+    readonly List<Vector3Int> vector3IntDirs = new List<Vector3Int>() { Vector3Int.forward ,Vector3Int.back,Vector3Int.left,Vector3Int.right};
 
     private void Start()
     {
@@ -56,7 +62,6 @@ public class LevelGenerator : SerializedMonoBehaviour
             yield return null;
             transform.position = targetPos;
         }
-
     }
 
     IEnumerator SpawnTile(Vector3Int cellPos)
@@ -94,23 +99,56 @@ public class LevelGenerator : SerializedMonoBehaviour
 
         for (int i = 0; i < mapSize.z; i++)
         {
-            for(int j = 0; j < mapSize.x; j++)
+            for (int j = 0; j < mapSize.x; j++)
             {
-                tileKeyDict.Add(new Vector3Int(j, 0, i), Random.Range(0f, 1f) < 0.5f ? "Grass" : "Water");
+                Vector3Int currentCell = new Vector3Int(j, 0, i);
+                // peek at neighbor tile
+                //  grass [grass:3,water:1]
+                //  water [grass:1,water:2]
+                var probs = new float[]{0, 0};    //[grassProb,waterProb]
+
+                foreach(var dir in vector3IntDirs)
+                {
+                    if (tileKeyDict.TryGetValue(currentCell + dir, out string key))
+                    {
+                        if (key == "Grass")
+                        {
+                            probs[0] += grassToGrass;
+                            probs[1] += grassToWater;
+                        }
+                        else
+                        {
+                            probs[0] += waterToGrass;
+                            probs[1] += waterToWater;
+                        }
+                    }
+                }
+                
+                tileKeyDict.Add(currentCell, Random.Range(0f, probs[0]+probs[1]) < probs[0] ? "Grass" : "Water");
             }
         }
+
+        var grassCount = 0;
+
+        foreach(var v in tileKeyDict.Values)
+        {
+            if(v == "Grass")
+            {
+                grassCount++;
+            }
+        }
+
+        Debug.Log(string.Format("Grass/Water : {0}/{1}", grassCount, (mapSize.x * mapSize.z) - grassCount));
 
     }
 
     [ButtonGroup("genLevel")]
     public void SpawnTiles()
     {
-        if (cloneDict.Count > 0)
-            ResetLevel();
-
         if (tileKeyDict.Count == 0)
             GenerateLevel();
-
+        if (cloneDict.Count > 0)
+            ResetLevel();
         cloneDict.Clear();
         StartCoroutine(SpawnTile(Vector3Int.zero));
     }
@@ -122,6 +160,6 @@ public class LevelGenerator : SerializedMonoBehaviour
         {
             Destroy(t);
         }
-        tileKeyDict.Clear();
+        cloneDict.Clear();
     }
 }
