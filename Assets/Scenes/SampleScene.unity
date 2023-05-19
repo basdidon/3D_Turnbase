@@ -1151,6 +1151,9 @@ MonoBehaviour:
     - Name: 
       Entry: 8
       Data: 
+    - Name: cloneDict
+      Entry: 6
+      Data: 
   tilePrefab: {fileID: 1976411418267329806, guid: 3c61f19b057fd134194ded29d1a8bf90, type: 3}
   tileHalfExtent: {x: 0.5, y: 0.5, z: 0.5}
   mapSize: {x: 5, y: 0, z: 5}

@@ -24,18 +24,29 @@ public class LevelGenerator : SerializedMonoBehaviour
     [Space]
     [OdinSerialize]
     [ShowInInspector]
-    Dictionary<Vector3Int, GameObject> tiles;
+    Dictionary<Vector3Int, string> tileKeyDict;
+
+    [Space]
+    [OdinSerialize]
+    [ShowInInspector]
+    Dictionary<Vector3Int, GameObject> cloneDict;
 
     public bool isFallInTiles;
     [ShowIfGroup("isFallInTiles")]
     [BoxGroup("isFallInTiles/FallInTilesProps")]
     [SerializeField] float fallingHeight = 5f, fallingDuration = 1f;
 
+    private void Start()
+    {
+        tileKeyDict = new Dictionary<Vector3Int, string>();
+        cloneDict = new Dictionary<Vector3Int, GameObject>();
+    }
+
     IEnumerator FallInTile(Transform transform)
     {
         Vector3 startPos = transform.position + Vector3.up * fallingHeight;
         Vector3 targetPos = transform.position;
-        
+
         float timeElapsed = 0f;
 
         while (timeElapsed < fallingDuration)
@@ -50,20 +61,19 @@ public class LevelGenerator : SerializedMonoBehaviour
 
     IEnumerator SpawnTile(Vector3Int cellPos)
     {
-        tilePrefab = Random.Range(0f, 1f) < 0.5f ? tilePrefabDict["Grass"] : tilePrefabDict["Water"];
-        GameObject clone = Instantiate(tilePrefab, new Vector3(cellPos.x + tileHalfExtent.x, 0, cellPos.z + tileHalfExtent.z), Quaternion.identity, transform);
+        GameObject clone = Instantiate(tilePrefabDict[tileKeyDict[cellPos]], new Vector3(cellPos.x + tileHalfExtent.x, 0, cellPos.z + tileHalfExtent.z), Quaternion.identity, transform);
         clone.name = string.Format("Node {0},{1}", cellPos.x, cellPos.z);
-        tiles.Add(cellPos, clone);
+        cloneDict.Add(cellPos, clone);
 
-        if(isFallInTiles)
+        if (isFallInTiles)
             StartCoroutine(FallInTile(clone.transform));
-        
+
         if (cellPos.x + 1 < mapSize.x)
         {
             yield return new WaitForSeconds(dalaySpawn);
             yield return SpawnTile(cellPos + Vector3Int.right);
         }
-        else 
+        else
         {
             if (cellPos.z + 1 < mapSize.z)
             {
@@ -77,19 +87,41 @@ public class LevelGenerator : SerializedMonoBehaviour
         }
     }
 
-    [ButtonGroup("genLevel",ButtonHeight = 20)]
+    [ButtonGroup("genLevel", ButtonHeight = 50)]
     public void GenerateLevel()
     {
+        tileKeyDict.Clear();
+
+        for (int i = 0; i < mapSize.z; i++)
+        {
+            for(int j = 0; j < mapSize.x; j++)
+            {
+                tileKeyDict.Add(new Vector3Int(j, 0, i), Random.Range(0f, 1f) < 0.5f ? "Grass" : "Water");
+            }
+        }
+
+    }
+
+    [ButtonGroup("genLevel")]
+    public void SpawnTiles()
+    {
+        if (cloneDict.Count > 0)
+            ResetLevel();
+
+        if (tileKeyDict.Count == 0)
+            GenerateLevel();
+
+        cloneDict.Clear();
         StartCoroutine(SpawnTile(Vector3Int.zero));
     }
 
     [ButtonGroup("genLevel")]
     public void ResetLevel()
     {
-        foreach(var t in tiles.Keys)
+        foreach(var t in cloneDict.Values)
         {
-            Destroy(tiles[t]);
+            Destroy(t);
         }
-        tiles.Clear();
+        tileKeyDict.Clear();
     }
 }
