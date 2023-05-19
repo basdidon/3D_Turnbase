@@ -740,7 +740,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 5
+  orthographic size: 10
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -764,7 +764,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
   m_LocalRotation: {x: 0.35355338, y: 0.35355338, z: -0.1464466, w: 0.8535535}
-  m_LocalPosition: {x: -3, y: 8, z: -3}
+  m_LocalPosition: {x: -3, y: 15, z: -3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1131,36 +1131,23 @@ MonoBehaviour:
     - Name: 
       Entry: 8
       Data: 
-    - Name: tiles
-      Entry: 7
-      Data: 2|System.Collections.Generic.Dictionary`2[[UnityEngine.Vector3Int, UnityEngine.CoreModule],[UnityEngine.GameObject,
-        UnityEngine.CoreModule]], mscorlib
-    - Name: comparer
-      Entry: 7
-      Data: 3|System.Collections.Generic.GenericEqualityComparer`1[[UnityEngine.Vector3Int,
-        UnityEngine.CoreModule]], mscorlib
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 12
-      Data: 0
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
+    - Name: tileKeyDict
+      Entry: 6
       Data: 
     - Name: cloneDict
       Entry: 6
       Data: 
   tilePrefab: {fileID: 1976411418267329806, guid: 3c61f19b057fd134194ded29d1a8bf90, type: 3}
   tileHalfExtent: {x: 0.5, y: 0.5, z: 0.5}
-  mapSize: {x: 5, y: 0, z: 5}
-  dalaySpawn: 0.2
+  mapSize: {x: 20, y: 0, z: 10}
+  dalaySpawn: 0.025
+  grassToGrass: 10
+  grassToWater: 1
+  waterToGrass: 1
+  waterToWater: 5
   isFallInTiles: 1
   fallingHeight: 10
-  fallingDuration: 1
+  fallingDuration: 0.5
 --- !u!4 &1390034930
 Transform:
   m_ObjectHideFlags: 0

@@ -3,7 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using Sirenix.OdinInspector;
 using Sirenix.Serialization;
-
+/*
+[System.Serializable]
+public struct TileGenerateProb
+{
+    string key;
+    float prob;
+}
+*/
 public class LevelGenerator : SerializedMonoBehaviour
 {
     [Required]
@@ -20,7 +27,12 @@ public class LevelGenerator : SerializedMonoBehaviour
     [OdinSerialize]
     [ShowInInspector]
     Dictionary<string, GameObject> tilePrefabDict;
-
+    /*
+    [Space]
+    [OdinSerialize]
+    [ShowInInspector]
+    Dictionary<string, TileGenerateProb> TileProbDict;
+    */
     [HorizontalGroup("grassProbs")]
     public float grassToGrass = 3f, grassToWater = 1f;
     [HorizontalGroup("waterProbs")]
