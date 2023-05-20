@@ -11,6 +11,7 @@ public struct TileGenerateProb
     float prob;
 }
 */
+
 public class LevelGenerator : SerializedMonoBehaviour
 {
     [Required]
@@ -27,12 +28,7 @@ public class LevelGenerator : SerializedMonoBehaviour
     [OdinSerialize]
     [ShowInInspector]
     Dictionary<string, GameObject> tilePrefabDict;
-    /*
-    [Space]
-    [OdinSerialize]
-    [ShowInInspector]
-    Dictionary<string, TileGenerateProb> TileProbDict;
-    */
+
     [HorizontalGroup("grassProbs")]
     public float grassToGrass = 3f, grassToWater = 1f;
     [HorizontalGroup("waterProbs")]
@@ -174,4 +170,6 @@ public class LevelGenerator : SerializedMonoBehaviour
         }
         cloneDict.Clear();
     }
+
+
 }
